@@ -40,10 +40,38 @@ const CreateTransaction = async (id, user, data) => {
       { broadcast: true, sign: true }
     );
 
-    console.log(tx, "\n");
-    console.log("\nResponse data:", tx.processed.action_traces[0].console);
+    console.log(tx);
   } catch (err) {
     console.log(err);
+  }
+};
+
+const ReadTransaction = async (id) => {
+  try {
+    const readId = await api.transact(
+      {
+        actions: [
+          {
+            account,
+            name: "read",
+            authorization: [
+              {
+                actor,
+                permission: "active",
+              },
+            ],
+            data: {
+              id,
+            },
+          },
+        ],
+      },
+      { broadcast: true, sign: true }
+    );
+    console.log(readId);
+    console.log("Record read by nyeka\n\n");
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -71,8 +99,7 @@ const DestroyTrancsaction = async (id) => {
     );
 
     console.log("Record destroyed by nyeka\n\n");
-    console.log(destroyTx, "\n");
-    console.log("responses: \n", destroyTx.processed.action_traces[0].console);
+    console.log(destroyTx);
   } catch (err) {
     console.log(err);
   }
@@ -80,7 +107,8 @@ const DestroyTrancsaction = async (id) => {
 
 const PushTransaction = async (DataId, user, data) => {
   await CreateTransaction(DataId, user, data);
+  await ReadTransaction(DataId);
   await DestroyTrancsaction(DataId);
 };
 
-PushTransaction(1020, account, "test push transaction by nyeka");
+PushTransaction(1050, account, "test push transaction by nyeka");
